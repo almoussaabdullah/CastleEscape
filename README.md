@@ -132,5 +132,9 @@ tools/              سكربتات التوليد
   | `ASC_KEY_ID` و `ASC_ISSUER_ID` | App Store Connect → Users and Access → Integrations → App Store Connect API → Generate key (دور **Admin**) |
   | `ASC_PRIVATE_KEY` | محتوى ملف `AuthKey_XXXXXXXX.p8` الذي يُنزَّل مرة واحدة عند إنشاء المفتاح |
 
+  الحالة الحالية: الأسرار مضبوطة، والمفتاح «CastleEscape GitHub» (Key ID `6728CM8CD7`) نشط، وسجل التطبيق موجود
+  (App Store Connect app id 6826153004، مجموعة TestFlight الداخلية «Go360 Team» بتوزيع تلقائي).
+  لرفع بناء جديد: Actions → TestFlight → Run workflow، أو `git tag v1.0.1 && git push --tags`.
+
   وقبل أول رفع: أنشئ سجل التطبيق في App Store Connect → My Apps → **+** بالـ Bundle ID `agency.go360.castleescape`
   (سجّل الـ App ID أولًا في developer.apple.com → Identifiers إن لم يظهر في القائمة).
