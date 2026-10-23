@@ -68,7 +68,7 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
         run: |
-          set -o pipefail
+          set +e
           mkdir -p build
           xcodebuild archive \
             -project "$PROJECT" \
@@ -83,8 +83,11 @@ jobs:
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
             CODE_SIGN_STYLE=Automatic \
             CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
-            2>&1 | tee build/xcodebuild-archive.log | grep -E "error:|warning: .*sign|\*\* ARCHIVE" || true
-          test "${PIPESTATUS[0]}" -eq 0
+            2>&1 | tee build/xcodebuild-archive.log | grep -E "error:|warning: .*sign|\*\* ARCHIVE"
+          status="${PIPESTATUS[0]}"
+          grep -hE "error:" build/xcodebuild-archive.log | sort -u | head -30 | while read -r line; do echo "::error::$line"; done
+          echo "::notice title=Archive::exit status $status — $(xcodebuild -version | tr '\n' ' ')"
+          exit "$status"
 
       - name: Write ExportOptions.plist
         env:
@@ -113,7 +116,7 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
         run: |
-          set -o pipefail
+          set +e
           xcodebuild -exportArchive \
             -archivePath build/CastleEscape.xcarchive \
             -exportOptionsPlist build/ExportOptions.plist \
@@ -122,9 +125,13 @@ jobs:
             -authenticationKeyPath "$AUTH_KEY_PATH" \
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
-            2>&1 | tee build/xcodebuild-export.log | grep -E "error:|Upload|EXPORT" || true
-          test "${PIPESTATUS[0]}" -eq 0
-          echo "✅ Uploaded build ${{ github.run_number }} — it will appear in TestFlight once Apple finishes processing."
+            2>&1 | tee build/xcodebuild-export.log | grep -E "error:|Upload|EXPORT"
+          status="${PIPESTATUS[0]}"
+          grep -hE "error:" build/xcodebuild-export.log | sort -u | head -30 | while read -r line; do echo "::error::$line"; done
+          if [ "$status" -eq 0 ]; then
+            echo "::notice title=TestFlight::Uploaded build ${{ github.run_number }} — it appears in TestFlight once Apple finishes processing."
+          fi
+          exit "$status"
 
       - name: Upload logs
         if: always()

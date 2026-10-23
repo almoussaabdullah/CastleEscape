@@ -4,7 +4,13 @@ import SwiftUI
 struct MenuSheet<Content: View>: View {
     let title: String
     let onClose: () -> Void
-    @ViewBuilder var content: Content
+    let content: Content
+
+    init(title: String, onClose: @escaping () -> Void, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.onClose = onClose
+        self.content = content()
+    }
 
     var body: some View {
         ZStack {

@@ -62,8 +62,13 @@ struct FantasyButtonStyle: ButtonStyle {
 
 /// Dark translucent panel with a gold frame.
 struct ParchmentPanel<Content: View>: View {
-    var padding: CGFloat = 20
-    @ViewBuilder var content: Content
+    let padding: CGFloat
+    let content: Content
+
+    init(padding: CGFloat = 20, @ViewBuilder content: () -> Content) {
+        self.padding = padding
+        self.content = content()
+    }
 
     var body: some View {
         content

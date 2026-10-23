@@ -2,7 +2,11 @@ import SwiftUI
 
 /// Dimmed backdrop shared by modal cards.
 struct ModalBackdrop<Content: View>: View {
-    @ViewBuilder var content: Content
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
 
     var body: some View {
         ZStack {

@@ -5,22 +5,22 @@ final class FloorWindowNode: SKNode {
     private let pane: SKShapeNode
     private let glow: SKSpriteNode
     private let banner: SKNode
-    private let frame: SKShapeNode
+    private let archFrame: SKShapeNode
     private(set) var status: FloorStatus = .locked
     let floor: Int
 
     init(floor: Int, size: CGSize = CastleLayout.windowSize) {
         self.floor = floor
-        frame = ShapeFactory.arch(width: size.width + 26, height: size.height + 14, fill: GamePalette.stoneLight)
+        archFrame = ShapeFactory.arch(width: size.width + 26, height: size.height + 14, fill: GamePalette.stoneLight)
         pane = ShapeFactory.arch(width: size.width, height: size.height, fill: GamePalette.windowDark)
         glow = ShapeFactory.glow(radius: 360, color: GamePalette.windowCurrent, alpha: 0)
         banner = SKNode()
         super.init()
-        frame.position = CGPoint(x: 0, y: -size.height / 2 - 7)
+        archFrame.position = CGPoint(x: 0, y: -size.height / 2 - 7)
         pane.position = CGPoint(x: 0, y: -size.height / 2)
         glow.zPosition = -1
         addChild(glow)
-        addChild(frame)
+        addChild(archFrame)
         addChild(pane)
         // Window cross bars.
         let barV = ShapeFactory.rect(CGRect(x: -3, y: -size.height / 2, width: 6, height: size.height), fill: GamePalette.stoneDark)
@@ -91,11 +91,11 @@ final class FloorWindowNode: SKNode {
 final class DecorWindowNode: SKNode {
     init(width: CGFloat = 54, height: CGFloat = 90, lit: Bool) {
         super.init()
-        let frame = ShapeFactory.arch(width: width + 14, height: height + 8, fill: GamePalette.stoneDark)
-        frame.position = CGPoint(x: 0, y: -height / 2 - 4)
+        let archFrame = ShapeFactory.arch(width: width + 14, height: height + 8, fill: GamePalette.stoneDark)
+        archFrame.position = CGPoint(x: 0, y: -height / 2 - 4)
         let pane = ShapeFactory.arch(width: width, height: height, fill: lit ? GamePalette.windowLit : GamePalette.windowDark)
         pane.position = CGPoint(x: 0, y: -height / 2)
-        addChild(frame)
+        addChild(archFrame)
         addChild(pane)
         if lit {
             let glow = ShapeFactory.glow(radius: 120, color: GamePalette.windowLit, alpha: 0.35)

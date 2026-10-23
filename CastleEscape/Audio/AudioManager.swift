@@ -8,7 +8,7 @@ enum SoundEffect: String, CaseIterable {
 }
 
 /// Plays synthesized audio through AVAudioEngine. Music and effects have independent toggles.
-final class AudioManager {
+final class AudioManager: NSObject {
     static let shared = AudioManager()
 
     var musicEnabled: Bool = true {
@@ -27,7 +27,9 @@ final class AudioManager {
     private var lastFootstep: TimeInterval = 0
     private let renderQueue = DispatchQueue(label: "castleescape.audio.render", qos: .utility)
 
-    private init() {}
+    private override init() {
+        super.init()
+    }
 
     /// Builds the graph and renders all buffers in the background; safe to call more than once.
     func prepare() {
