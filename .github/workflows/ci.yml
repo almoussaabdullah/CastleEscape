@@ -59,7 +59,14 @@ jobs:
             -resultBundlePath build/TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
             2>&1 | tee build/xcodebuild-test.log | grep -E "Test Case|Executed|error:|\*\* TEST" || true
-          test "${PIPESTATUS[0]}" -eq 0
+          status="${PIPESTATUS[0]}"
+          summary=$(grep -E "Executed [0-9]+ tests" build/xcodebuild-test.log | tail -1)
+          xcode=$(xcodebuild -version | tr '\n' ' ')
+          echo "::notice title=Unit tests::${summary:-no summary} — $xcode"
+          grep -E "error:" build/xcodebuild-build.log build/xcodebuild-test.log | sort -u | head -20 | while read -r line; do echo "::error::$line"; done
+          warnings=$(grep -c "warning:" build/xcodebuild-build.log || true)
+          echo "::notice title=Compiler warnings::$warnings warning lines in the simulator build"
+          test "$status" -eq 0
 
       - name: Upload logs
         if: always()
