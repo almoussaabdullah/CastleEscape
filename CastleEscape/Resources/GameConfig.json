@@ -1,0 +1,19 @@
+{
+  "scoring": {
+    "basePoints": 100,
+    "fastAnswerBonus": 50,
+    "fastAnswerFraction": 0.4,
+    "fastAnswerSeconds": 4.0,
+    "comboThresholds": [
+      { "streak": 3, "multiplier": 2.0 },
+      { "streak": 5, "multiplier": 3.0 }
+    ],
+    "shieldStreak": 10,
+    "coinsPerCorrect": 10,
+    "floorCompletionCoins": 50,
+    "coinsPerStar": 15,
+    "hintCost": 30
+  },
+  "guardLungeDuration": 0.55,
+  "defaultSafetyMargin": 3
+}

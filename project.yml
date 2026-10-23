@@ -1,0 +1,71 @@
+# XcodeGen specification — equivalent to the committed CastleEscape.xcodeproj.
+# Regenerate with:  xcodegen generate
+name: CastleEscape
+options:
+  bundleIdPrefix: agency.go360
+  deploymentTarget:
+    iOS: "17.0"
+  developmentLanguage: ar
+  xcodeVersion: "15.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
+targets:
+  CastleEscape:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: CastleEscape
+    info:
+      path: CastleEscape/Generated/Info.plist
+      properties:
+        CFBundleDisplayName: Castle Escape
+        ITSAppUsesNonExemptEncryption: false
+        LSApplicationCategoryType: public.app-category.puzzle-games
+        UILaunchScreen: {}
+        UIRequiresFullScreen: true
+        UIStatusBarHidden: true
+        UIViewControllerBasedStatusBarAppearance: false
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown]
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: agency.go360.castleescape
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        CODE_SIGN_STYLE: Automatic
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+  CastleEscapeTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: CastleEscapeTests
+    dependencies:
+      - target: CastleEscape
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: agency.go360.castleescape.tests
+        TARGETED_DEVICE_FAMILY: "1"
+schemes:
+  CastleEscape:
+    build:
+      targets:
+        CastleEscape: all
+        CastleEscapeTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - CastleEscapeTests
+    archive:
+      config: Release

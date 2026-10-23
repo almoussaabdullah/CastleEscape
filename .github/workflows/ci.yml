@@ -1,0 +1,72 @@
+name: Build & Test
+
+# Compiles the app for the iOS Simulator and runs the XCTest suite on every push.
+# Needs no Apple account or secrets — this is the "does it compile?" gate.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Simulator build + unit tests
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Xcode version
+        run: |
+          xcodebuild -version
+          xcrun simctl list runtimes | grep iOS || true
+
+      - name: Pick a simulator
+        id: sim
+        run: |
+          UDID=$(python3 tools/pick_simulator.py)
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          echo "Using simulator $UDID"
+
+      - name: Build for simulator
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p build
+          xcodebuild build-for-testing \
+            -project CastleEscape.xcodeproj \
+            -scheme CastleEscape \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            2>&1 | tee build/xcodebuild-build.log | grep -E "error:|warning: unre|\*\* BUILD" || true
+          test "${PIPESTATUS[0]}" -eq 0
+
+      - name: Run unit tests
+        shell: bash
+        run: |
+          set -o pipefail
+          xcodebuild test-without-building \
+            -project CastleEscape.xcodeproj \
+            -scheme CastleEscape \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath build/DerivedData \
+            -resultBundlePath build/TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            2>&1 | tee build/xcodebuild-test.log | grep -E "Test Case|Executed|error:|\*\* TEST" || true
+          test "${PIPESTATUS[0]}" -eq 0
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-logs
+          path: |
+            build/*.log
+            build/TestResults.xcresult
+          if-no-files-found: ignore
